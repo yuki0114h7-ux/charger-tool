@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>かるがる充電器チェッカー ☕️⚡️</title>
+  
+  <!-- まるっこい日本語フォント（M PLUS Rounded 1c） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            rounded: ['"M PLUS Rounded 1c"', 'sans-serif'],
+          },
+          colors: {
+            // カフェラテ＆くすみピーチのやさしいパレット
+            cream: {
+              50: '#fdfbf7',
+              100: '#f8f4ed',
+              200: '#efe6d8',
+            },
+            latte: {
+              50: '#faf7f2',
+              100: '#f4ede4',
+              200: '#e8dcce',
+              300: '#d5c2ae',
+              400: '#b89c83',
+              600: '#7a5e48',
+              800: '#4a382c',
+            },
+            peach: {
+              50: '#fff7f5',
+              100: '#ffeee9',
+              200: '#ffdcd3',
+              300: '#fca997',
+              400: '#f67e68',
+              500: '#ea5a42',
+            },
+            mint: {
+              50: '#f2f8f6',
+              100: '#dceee7',
+              500: '#5aa38a',
+            }
+          },
+          boxShadow: {
+            'soft': '0 8px 24px -4px rgba(138, 105, 85, 0.08)',
+            'soft-lg': '0 16px 36px -6px rgba(138, 105, 85, 0.12)',
+            'pop': '0 4px 0 0 #d95843',
+            'pop-latte': '0 4px 0 0 #cfbaa7',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#faf6f0] text-latte-800 antialiased min-h-screen flex flex-col font-rounded selection:bg-peach-200">
+
+  <!-- ヘッダー -->
+  <header class="bg-white/80 backdrop-blur-md border-b border-latte-200/60 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-2xl mx-auto px-5 py-3.5 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <span class="text-2xl filter drop-shadow-sm">🔌✨</span>
+        <h1 class="text-base md:text-lg font-extrabold text-latte-800 tracking-tight">充電器ワット数チェッカー</h1>
+      </div>
+      <span class="text-xs bg-peach-50 text-peach-500 font-bold px-3 py-1 rounded-full border border-peach-200 flex items-center gap-1">
+        <span>☕️</span> 30秒でわかる
+      </span>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="flex-grow max-w-2xl mx-auto px-4 py-8 w-full">
+    
+    <!-- 導入メッセージ -->
+    <div class="text-center mb-8">
+      <div class="inline-block bg-white text-latte-600 text-xs font-bold px-4 py-1.5 rounded-full shadow-sm mb-3 border border-latte-200/50">
+        🌷 むずかしい計算はぜんぶおまかせ！
+      </div>
+      <h2 class="text-2xl md:text-3xl font-extrabold text-latte-800 mb-2 leading-snug">
+        いっしょに充電したいものを<br class="sm:hidden">えらぶだけ
+      </h2>
+      <p class="text-latte-600 text-xs md:text-sm leading-relaxed max-w-md mx-auto">
+        「どれを買えばいいかわからない…」をすっきり解決。<br>あなたにぴったりの充電器をすぐにお探しします。
+      </p>
+    </div>
+
+    <!-- 入力カード -->
+    <div class="bg-white rounded-[28px] shadow-soft border border-latte-200/60 p-6 md:p-8 mb-8 relative">
+      
+      <div class="flex items-center gap-2 mb-4">
+        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-peach-400 text-white text-xs font-black shadow-sm">1</span>
+        <h3 class="text-sm md:text-base font-extrabold text-latte-800">
+          充電したい機器をえらんでね
+        </h3>
+      </div>
+
+      <!-- 選択エリア -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-4">
+        <!-- カテゴリ選択 -->
+        <div class="md:col-span-4">
+          <label class="block text-xs font-bold text-latte-600 mb-1.5 ml-1">カテゴリ 🏷️</label>
+          <div class="relative">
+            <select id="categorySelect" class="w-full appearance-none bg-latte-50 border-2 border-latte-200/80 rounded-2xl px-4 py-3 text-xs md:text-sm font-bold text-latte-800 focus:outline-none focus:border-peach-400 focus:bg-white transition cursor-pointer pr-9 shadow-inner">
+              <!-- JSで動的に追加されます -->
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-latte-400">
+              <span class="text-xs">▼</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- デバイス選択 -->
+        <div class="md:col-span-5">
+          <label class="block text-xs font-bold text-latte-600 mb-1.5 ml-1">使っている機器 📱</label>
+          <div class="relative">
+            <select id="deviceSelect" class="w-full appearance-none bg-latte-50 border-2 border-latte-200/80 rounded-2xl px-4 py-3 text-xs md:text-sm font-bold text-latte-800 focus:outline-none focus:border-peach-400 focus:bg-white transition cursor-pointer pr-9 shadow-inner truncate">
+              <!-- JSで動的に追加されます -->
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-latte-400">
+              <span class="text-xs">▼</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 追加ボタン -->
+        <div class="md:col-span-3 flex items-end">
+          <button id="addBtn" type="button" class="w-full bg-peach-400 hover:bg-peach-500 active:translate-y-0.5 text-white font-extrabold py-3 px-4 rounded-2xl text-xs md:text-sm transition-all flex items-center justify-center gap-1 shadow-md shadow-peach-400/25">
+            <span>＋</span> 追加する
+          </button>
+        </div>
+      </div>
+
+      <!-- 追加済みデバイス一覧 -->
+      <div class="mt-6 border-t border-dashed border-latte-200 pt-5">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-xs font-bold text-latte-600 flex items-center gap-1">
+            <span>🧺</span> えらんだ機器リスト
+          </span>
+          <span id="deviceCountBadge" class="text-xs bg-latte-100 text-latte-800 px-3 py-1 rounded-full font-bold">
+            0台選択中
+          </span>
+        </div>
+
+        <!-- 空表示 -->
+        <div id="emptyState" class="text-center py-8 text-latte-400 border-2 border-dashed border-latte-200 rounded-2xl bg-latte-50/50">
+          <span class="text-2xl block mb-1">🧸</span>
+          <p class="text-xs font-bold">上のメニューから機器をえらんで「追加する」を押してね</p>
+        </div>
+
+        <!-- リスト -->
+        <ul id="selectedList" class="space-y-2.5 hidden"></ul>
+      </div>
+
+      <!-- 診断ボタン -->
+      <div class="mt-7">
+        <button id="calculateBtn" type="button" disabled class="w-full bg-latte-200 text-latte-400 font-extrabold py-4 px-6 rounded-2xl text-base transition-all flex items-center justify-center gap-2 cursor-not-allowed">
+          <span>おすすめの充電器をみる 🔍</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 結果エリア（初期非表示） -->
+    <div id="resultSection" class="hidden space-y-6 scroll-mt-20">
+      
+      <!-- 診断結果サマリーバナー -->
+      <div class="bg-gradient-to-r from-latte-600 to-latte-700 text-white rounded-[26px] p-6 shadow-soft relative overflow-hidden">
+        <!-- 背景のかわいい丸装飾 -->
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/5 rounded-full pointer-events-none"></div>
+
+        <div class="flex items-center gap-1.5 text-peach-200 text-xs font-extrabold tracking-wide mb-2">
+          <span>✨</span> 診断けっか
+        </div>
+        <div class="text-lg md:text-xl font-bold flex flex-wrap items-baseline gap-2 leading-relaxed">
+          <span>同時に充電するには</span>
+          <span id="resultWatts" class="text-amber-300 font-black text-2xl md:text-3xl underline decoration-peach-300/60 decoration-wavy">合計 0W 以上</span>
+          <span class="text-latte-200">・</span>
+          <span id="resultPorts" class="text-amber-300 font-black text-2xl md:text-3xl">0ポート以上</span>
+          <span>が目安です！</span>
+        </div>
+      </div>
+
+      <!-- ズバリこの1台カード -->
+      <div class="bg-white rounded-[32px] border-2 border-peach-300 p-6 md:p-8 shadow-soft-lg relative">
+        
+        <!-- アイキャッチバッジ -->
+        <div class="inline-flex items-center gap-1.5 bg-gradient-to-r from-peach-400 to-peach-500 text-white text-xs md:text-sm font-extrabold px-4 py-1.5 rounded-full shadow-md shadow-peach-400/30 mb-5">
+          <span>👑</span> あなたに一番ぴったりな1台
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          
+          <!-- 商品画像エリア -->
+          <div class="md:col-span-5">
+            <div class="w-full aspect-square bg-[#fbf8f5] border-2 border-latte-200/70 rounded-2xl flex flex-col items-center justify-center text-latte-400 p-6 text-center shadow-inner">
+              <span class="text-5xl mb-2 filter drop-shadow">🤍🔌</span>
+              <span class="text-xs font-extrabold text-latte-800" id="cardImageLabel">Anker 充電器</span>
+              <span class="text-[10px] text-latte-400 mt-1">※商品画像が入ります</span>
+            </div>
+          </div>
+
+          <!-- 商品情報 -->
+          <div class="md:col-span-7 flex flex-col justify-between h-full">
+            <div>
+              <!-- ブランド＆星評価 -->
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-[11px] font-extrabold bg-latte-100 text-latte-700 px-2.5 py-0.5 rounded-full border border-latte-200/60">
+                  安心の Anker 製
+                </span>
+                <span class="text-xs text-amber-500 font-bold">★★★★★ 4.6</span>
+              </div>
+
+              <!-- 商品名 -->
+              <h3 id="recommendTitle" class="text-xl md:text-2xl font-black text-latte-800 leading-snug mb-3">
+                <!-- JSで出力 -->
+              </h3>
+
+              <!-- おすすめする理由 -->
+              <div id="recommendReason" class="text-xs md:text-sm text-latte-700 leading-relaxed mb-4 bg-peach-50/70 border border-peach-200/70 p-4 rounded-2xl">
+                <!-- JSで出力 -->
+              </div>
+
+              <!-- スペックバッジ -->
+              <div class="flex flex-wrap gap-1.5 mb-6" id="recommendSpecs">
+                <!-- JSで出力 -->
+              </div>
+            </div>
+
+            <!-- アクションボタンエリア -->
+            <div>
+              <a id="mainAmazonBtn" href="https://www.amazon.co.jp/" target="_blank" rel="noopener noreferrer" class="w-full bg-[#f18357] hover:bg-[#e07246] active:scale-[0.98] text-white font-black py-4 px-6 rounded-2xl text-base shadow-lg shadow-[#f18357]/25 transition flex items-center justify-center gap-2 cursor-pointer text-center">
+                <span>Amazonで最安値・在庫を見る</span>
+                <span class="text-lg">➔</span>
+              </a>
+
+              <!-- サブリンク（UGREEN等） -->
+              <div class="mt-4 pt-3 border-t border-latte-100 text-center">
+                <p class="text-xs text-latte-600 font-medium">
+                  「もっとおトクに揃えたいな」という方はこちら<br class="md:hidden">
+                  <a id="subUgreenBtn" href="https://www.amazon.co.jp/" target="_blank" rel="noopener noreferrer" class="text-peach-500 font-bold underline hover:text-peach-600 ml-1 inline-flex items-center gap-0.5">
+                    <span>高コスパのUGREEN製（同等モデル）を見る</span>
+                    <span class="text-[10px]">↗</span>
+                  </a>
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="bg-white/60 border-t border-latte-200/60 py-6 text-center text-xs text-latte-400">
+    <p class="max-w-md mx-auto px-4">※各機器のワット数は、急速充電に必要な一般的な目安です。</p>
+  </footer>
+
+  <!-- ============================================== -->
+  <!-- JavaScript ロジック（内部ロジックは完全維持） -->
+  <!-- ============================================== -->
+  <script>
+    /**
+     * 【内部データ設定（デバイス）】
+     */
+     const DEVICE_DATABASE = [
+  // --- スマートフォン (22件) ---
+  { category: "スマートフォン", name: "iPhone 18 Pro / 18 Pro Max", watts: 60 },
+  { category: "スマートフォン", name: "iPhone Duo (折りたたみ)", watts: 60 },
+  { category: "スマートフォン", name: "iPhone 17 Pro / 17 Pro Max", watts: 40 },
+  { category: "スマートフォン", name: "iPhone 17", watts: 40 },
+  { category: "スマートフォン", name: "iPhone 17 Air / 17 Slim", watts: 20 },
+  { category: "スマートフォン", name: "iPhone 16 Pro / 16 Pro Max", watts: 30 },
+  { category: "スマートフォン", name: "iPhone 16 / 16 Plus", watts: 25 },
+  { category: "スマートフォン", name: "iPhone 15 Pro / 15 Pro Max", watts: 27 },
+  { category: "スマートフォン", name: "iPhone 15 / 15 Plus", watts: 20 },
+  { category: "スマートフォン", name: "iPhone 14 / 13 / 12 シリーズ", watts: 20 },
+  { category: "スマートフォン", name: "iPhone SE (第2/第3世代)", watts: 20 },
+  { category: "スマートフォン", name: "Samsung Galaxy S25 / S24 Ultra", watts: 45 },
+  { category: "スマートフォン", name: "Samsung Galaxy S25 / S24", watts: 25 },
+  { category: "スマートフォン", name: "Samsung Galaxy Z Fold6 / Flip6", watts: 25 },
+  { category: "スマートフォン", name: "Google Pixel 9 Pro XL", watts: 37 },
+  { category: "スマートフォン", name: "Google Pixel 9 / 9 Pro / 8 Pro", watts: 30 },
+  { category: "スマートフォン", name: "Google Pixel 8 / 7", watts: 27 },
+  { category: "スマートフォン", name: "Google Pixel 8a / 7a", watts: 18 },
+  { category: "スマートフォン", name: "Sony Xperia 1 VI / 1 V", watts: 30 },
+  { category: "スマートフォン", name: "Sony Xperia 10 VI / 10 V", watts: 18 },
+  { category: "スマートフォン", name: "Xiaomi 14 Ultra / 13T Pro", watts: 90 },
+  { category: "スマートフォン", name: "OPPO Reno11 A / 12 A", watts: 67 },
+
+  // --- タブレット (9件) ---
+  { category: "タブレット", name: "iPad Pro 11 / 13インチ (M4)", watts: 35 },
+  { category: "タブレット", name: "iPad Pro 11 / 12.9インチ (M2/M1)", watts: 30 },
+  { category: "タブレット", name: "iPad Air 11 / 13インチ (M2)", watts: 30 },
+  { category: "タブレット", name: "iPad mini (第7世代 / A17 Pro)", watts: 20 },
+  { category: "タブレット", name: "iPad (第10世代)", watts: 20 },
+  { category: "タブレット", name: "Samsung Galaxy Tab S10 / S9 Ultra", watts: 45 },
+  { category: "タブレット", name: "Google Pixel Tablet", watts: 15 },
+  { category: "タブレット", name: "Xiaomi Pad 6 / 6S Pro", watts: 33 },
+  { category: "タブレット", name: "Amazon Fire Max 11 / HD 10", watts: 15 },
+
+  // --- ノートPC (12件) ---
+  { category: "ノートPC", name: "MacBook Air 13 / 15インチ (通常充電)", watts: 30 },
+  { category: "ノートPC", name: "MacBook Air 13 / 15インチ (急速充電)", watts: 70 },
+  { category: "ノートPC", name: "MacBook Pro 14インチ (M3 / M4)", watts: 70 },
+  { category: "ノートPC", name: "MacBook Pro 16インチ (M3 / M4 Pro・Max)", watts: 140 },
+  { category: "ノートPC", name: "Microsoft Surface Pro 11 / 10", watts: 65 },
+  { category: "ノートPC", name: "Microsoft Surface Laptop 7 / 6", watts: 65 },
+  { category: "ノートPC", name: "Microsoft Surface Go 4 / 3", watts: 30 },
+  { category: "ノートPC", name: "Dell XPS 13 / 14", watts: 60 },
+  { category: "ノートPC", name: "Lenovo ThinkPad X1 Carbon", watts: 65 },
+  { category: "ノートPC", name: "HP Spectre / Envy x360", watts: 65 },
+  { category: "ノートPC", name: "HP Pavilion 14 / 15", watts: 45 },
+  { category: "ノートPC", name: "ASUS Zenbook 14 OLED", watts: 65 },
+
+  // --- その他（イヤホン等） (7件) ---
+  { category: "その他（イヤホン等）", name: "AirPods Pro / AirPods (全モデル)", watts: 5 },
+  { category: "その他（イヤホン等）", name: "AirPods Max (ヘッドホン)", watts: 15 },
+  { category: "その他（イヤホン等）", name: "Apple Watch (急速充電対応モデル)", watts: 5 },
+  { category: "その他（イヤホン等）", name: "ソニー WF-1000XM5 / LinkBuds", watts: 5 },
+  { category: "その他（イヤホン等）", name: "Nintendo Switch (本体携帯モード)", watts: 18 },
+  { category: "その他（イヤホン等）", name: "Nintendo Switch (TVドック接続時)", watts: 39 },
+  { category: "その他（イヤホン等）", name: "ポータブルゲーミングPC (ROG Ally / Steam Deck)", watts: 65 }
+];
+
+    /**
+     * 【充電器データベース（CHARGER_DATABASE）】
+     */
+    const CHARGER_DATABASE = [
+      {
+        name: "Anker 511 Charger (Nano 20W)",
+        watts: 20,
+        ports: 1,
+        reason: "スマホやイヤホン1台を素早く充電するのに最適な、手のひらサイズの超小型モデルです。ポーチに入れて身軽におでかけできます。",
+        specs: ["最大出力 20W", "USB-C × 1ポート", "超軽量・指先サイズ", "スマホ急速充電対応"],
+        imageLabel: "Anker 20W (1ポート)",
+        mainAmazonUrl: "https://www.amazon.co.jp/s?k=Anker+20W+%E5%85%85%E9%9B%BB%E5%99%A8",
+        subUgreenUrl: "https://www.amazon.co.jp/s?k=UGREEN+20W+%E5%85%85%E9%9B%BB%E5%99%A8"
+      },
+      {
+        name: "Anker 511 Charger (Nano 3, 30W)",
+        watts: 30,
+        ports: 1,
+        reason: "最新スマホの最高速充電やMacBook Airの標準充電にぴったりな、折りたたみプラグ搭載のコロンと可愛い最小クラスです。",
+        specs: ["最大出力 30W", "USB-C × 1ポート", "折りたたみ式プラグ", "MacBook Air/スマホ対応"],
+        imageLabel: "Anker 30W (1ポート)",
+        mainAmazonUrl: "https://www.amazon.co.jp/s?k=Anker+30W+%E5%85%85%E9%9B%BB%E5%99%A8",
+        subUgreenUrl: "https://www.amazon.co.jp/s?k=UGREEN+30W+%E5%85%85%E9%9B%BB%E5%99%A8"
+      },
+      {
+        name: "Anker 521 Charger (Nano Pro, 40W)",
+        watts: 40,
+        ports: 2,
+        reason: "スマホ2台や「スマホ＋イヤホン」を同時に急速充電できる薄型2ポートモデルです。コンセント周りもすっきり可愛くまとまります。",
+        specs: ["最大出力 40W (合計)", "USB-C × 2ポート", "2台同時急速充電対応", "ActiveShield安全設計"],
+        imageLabel: "Anker 40W (2ポート)",
+        mainAmazonUrl: "https://www.amazon.co.jp/s?k=Anker+40W+2%E3%83%9D%E3%83%BC%E3%83%88+%E5%85%85%E9%9B%BB%E5%99%A8",
+        subUgreenUrl: "https://www.amazon.co.jp/s?k=UGREEN+40W+2%E3%83%9D%E3%83%BC%E3%83%88+%E5%85%85%E9%9B%BB%E5%99%A8"
+      },
+      {
+        name: "Anker 715 Charger (Nano II 65W)",
+        watts: 65,
+        ports: 1,
+        reason: "ノートPC1台をフルスピード充電することに特化した、卵サイズの極小65Wモデルです。純正の重たいアダプタから解放されます。",
+        specs: ["最大出力 65W", "USB-C × 1ポート", "純正より約50%小型", "ノートPC急速充電対応"],
+        imageLabel: "Anker 65W (1ポート)",
+        mainAmazonUrl: "https://www.amazon.co.jp/s?k=Anker+65W+%E5%8D%98%E3%83%9D%E3%83%BC%E3%83%88+%E5%85%85%E9%9B%BB%E5%99%A8",
+        subUgreenUrl: "https://www.amazon.co.jp/s?k=UGREEN+65W+%E5%85%85%E9%9B%BB%E5%99%A8"
+      },
+      {
+        name: "Anker 523 Charger (Nano 3, 65W)",
+        watts: 65,
+        ports: 2,
+        reason: "ノートPCとスマホの2台を同時に急速充電できる、持ち運びに便利な薄型デュアルポートモデルです。",
+        specs: ["最大出力 65W", "USB-C × 2ポート", "GaN採用スリムボディ", "PC＋スマホ同時急速充電"],
+        imageLabel: "Anker 65W (2ポート)",
+        mainAmazonUrl: "https://www.amazon.co.jp/s?k=Anker+65W+2%E3%83%9D%E3%83%BC%E3%83%88+%E5%85%85%E9%9B%BB%E5%99%A8",
+        subUgreenUrl: "https://www.amazon.co.jp/s?k=UGREEN+65W+2%E3%83%9D%E3%83%BC%E3%83%88+%E5%85%85%E9%9B%BB%E5%99%A8"
+      },
+      {
+        name: "Anker Prime Wall Charger (67W, 3 Ports)",
+        watts: 67,
+        ports: 3,
+        reason: "ノートPC＋スマホ＋イヤホン等をこれ1つで急速充電。おうちカフェやお出かけ先でも頼れる一番人気の万能モデルです。",
+        specs: ["最大出力 67W", "USB-C × 2 + USB-A × 1", "独自技術GaNPrime採用", "3台同時急速充電対応"],
+        imageLabel: "Anker 67W (3ポート)",
+        mainAmazonUrl: "https://www.amazon.co.jp/s?k=Anker+67W+3%E3%83%9D%E3%83%BC%E3%83%88+%E5%85%85%E9%9B%BB%E5%99%A8",
+        subUgreenUrl: "https://www.amazon.co.jp/s?k=UGREEN+65W+3%E3%83%9D%E3%83%BC%E3%83%88+%E5%85%85%E9%9B%BB%E5%99%A8"
+      },
+      {
+        name: "Anker Prime Wall Charger (100W, 3 Ports)",
+        watts: 100,
+        ports: 3,
+        reason: "ハイスペックなノートPCとスマホを余裕で同時に急速充電できる、パワフル＆頼もしい3ポート充電器です。",
+        specs: ["最大出力 100W", "USB-C × 2 + USB-A × 1", "高出力GaNPrime", "ノートPC 2台同時充電可"],
+        imageLabel: "Anker 100W (3ポート)",
+        mainAmazonUrl: "https://www.amazon.co.jp/s?k=Anker+100W+3%E3%83%9D%E3%83%BC%E3%83%88+%E5%85%85%E9%9B%BB%E5%99%A8",
+        subUgreenUrl: "https://www.amazon.co.jp/s?k=UGREEN+100W+3%E3%83%9D%E3%83%BC%E3%83%88+%E5%85%85%E9%9B%BB%E5%99%A8"
+      },
+      {
+        name: "Anker 747 Charger (GaNPrime 150W, 4 Ports)",
+        watts: 150,
+        ports: 4,
+        reason: "4台の機器を一気にフルスピード充電。お部屋のコンセント周りを完全にこれ1台ですっきりまとめられます。",
+        specs: ["最大出力 150W", "USB-C × 3 + USB-A × 1", "4台同時フルスピード充電", "電力自動最適配分機能"],
+        imageLabel: "Anker 150W (4ポート)",
+        mainAmazonUrl: "https://www.amazon.co.jp/s?k=Anker+150W+%E5%85%85%E9%9B%BB%E5%99%A8",
+        subUgreenUrl: "https://www.amazon.co.jp/s?k=UGREEN+140W+%E5%85%85%E9%9B%BB%E5%99%A8"
+      },
+      {
+        name: "Anker Prime Desktop Charger (240W, 4 Ports)",
+        watts: 240,
+        ports: 4,
+        reason: "最大240Wのモンスター級パワー。ハイスペックPCも含めて何でも最速で充電できる最強の充電ステーションです。",
+        specs: ["合計最大 240W", "USB-C × 3 + USB-A × 1", "単ポート最大140W対応", "最高峰デスクトップ仕様"],
+        imageLabel: "Anker 240W (4ポート)",
+        mainAmazonUrl: "https://www.amazon.co.jp/s?k=Anker+240W+%E5%85%85%E9%9B%BB%E5%99%A8",
+        subUgreenUrl: "https://www.amazon.co.jp/s?k=UGREEN+200W+%E5%85%85%E9%9B%BB%E5%99%A8"
+      }
+    ];
+
+    // ユーザー選択デバイスリスト
+    let selectedDevices = [];
+
+    // DOM参照
+    const categorySelect = document.getElementById('categorySelect');
+    const deviceSelect = document.getElementById('deviceSelect');
+    const addBtn = document.getElementById('addBtn');
+    const selectedList = document.getElementById('selectedList');
+    const emptyState = document.getElementById('emptyState');
+    const deviceCountBadge = document.getElementById('deviceCountBadge');
+    const calculateBtn = document.getElementById('calculateBtn');
+    const resultSection = document.getElementById('resultSection');
+
+    // 結果表示用DOM
+    const resultWatts = document.getElementById('resultWatts');
+    const resultPorts = document.getElementById('resultPorts');
+    const recommendTitle = document.getElementById('recommendTitle');
+    const recommendReason = document.getElementById('recommendReason');
+    const recommendSpecs = document.getElementById('recommendSpecs');
+    const cardImageLabel = document.getElementById('cardImageLabel');
+    const mainAmazonBtn = document.getElementById('mainAmazonBtn');
+    const subUgreenBtn = document.getElementById('subUgreenBtn');
+
+    /**
+     * 初期化処理
+     */
+    function init() {
+      const categories = [...new Set(DEVICE_DATABASE.map(item => item.category))];
+      categorySelect.innerHTML = categories
+        .map(cat => `<option value="${cat}">${cat}</option>`)
+        .join('');
+
+      if (categories.length > 0) {
+        updateDeviceOptions(categories[0]);
+      }
+
+      categorySelect.addEventListener('change', (e) => {
+        updateDeviceOptions(e.target.value);
+      });
+
+      addBtn.addEventListener('click', addSelectedDevice);
+      calculateBtn.addEventListener('click', calculateOptimalCharger);
+    }
+
+    function updateDeviceOptions(categoryName) {
+      const filtered = DEVICE_DATABASE.filter(item => item.category === categoryName);
+      deviceSelect.innerHTML = filtered
+        .map(item => `<option value="${item.name}">${item.name} (${item.watts}W)</option>`)
+        .join('');
+    }
+
+    function addSelectedDevice() {
+      const selectedName = deviceSelect.value;
+      const deviceObj = DEVICE_DATABASE.find(item => item.name === selectedName);
+      if (!deviceObj) return;
+
+      const itemWithId = {
+        ...deviceObj,
+        id: Date.now() + Math.random().toString(36).substring(2, 5)
+      };
+
+      selectedDevices.push(itemWithId);
+      renderSelectedList();
+    }
+
+    function removeDevice(id) {
+      selectedDevices = selectedDevices.filter(item => item.id !== id);
+      renderSelectedList();
+    }
+
+    function renderSelectedList() {
+      deviceCountBadge.textContent = `${selectedDevices.length}台えらび中`;
+
+      if (selectedDevices.length === 0) {
+        emptyState.classList.remove('hidden');
+        selectedList.classList.add('hidden');
+        calculateBtn.disabled = true;
+        calculateBtn.className = "w-full bg-latte-200 text-latte-400 font-extrabold py-4 px-6 rounded-2xl text-base transition-all flex items-center justify-center gap-2 cursor-not-allowed";
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      selectedList.classList.remove('hidden');
+      calculateBtn.disabled = false;
+      calculateBtn.className = "w-full bg-peach-400 hover:bg-peach-500 active:translate-y-0.5 text-white font-black py-4 px-6 rounded-2xl text-base transition-all flex items-center justify-center gap-2 shadow-lg shadow-peach-400/30 cursor-pointer";
+
+      selectedList.innerHTML = selectedDevices.map((item) => `
+        <li class="flex items-center justify-between bg-latte-50/70 border border-latte-200/80 rounded-2xl px-4 py-3 transition hover:bg-white">
+          <div class="flex items-center space-x-2.5">
+            <span class="text-[11px] bg-white text-latte-700 border border-latte-200 font-extrabold px-2.5 py-1 rounded-full shadow-xs">
+              ${item.category}
+            </span>
+            <span class="text-xs md:text-sm font-bold text-latte-800">${item.name}</span>
+          </div>
+          <div class="flex items-center space-x-2.5">
+            <span class="text-xs font-black text-peach-500 bg-peach-50 px-2.5 py-1 rounded-full border border-peach-100">
+              約${item.watts}W
+            </span>
+            <button onclick="removeDevice('${item.id}')" class="text-latte-400 hover:text-peach-500 text-sm w-7 h-7 flex items-center justify-center rounded-full hover:bg-peach-50 transition" title="削除">
+              ✕
+            </button>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    /**
+     * 【最適マッチングロジック】
+     */
+    function calculateOptimalCharger() {
+      if (selectedDevices.length === 0) return;
+
+      const portCount = selectedDevices.length;
+      const totalWatts = selectedDevices.reduce((sum, item) => sum + item.watts, 0);
+
+      // サマリー表示
+      resultWatts.textContent = `合計 ${totalWatts}W 以上`;
+      resultPorts.textContent = `${portCount}ポート以上`;
+
+      // 1. 条件に合致する充電器を抽出
+      const matchingChargers = CHARGER_DATABASE.filter(charger => 
+        charger.watts >= totalWatts && charger.ports >= portCount
+      );
+
+      // 2. 該当判定
+      if (matchingChargers.length > 0) {
+        // コスパ最優先ソート
+        matchingChargers.sort((a, b) => a.watts - b.watts || a.ports - b.ports);
+
+        const bestCharger = matchingChargers[0];
+
+        // ポート数余り時のフォロー文
+        let reasonHtml = bestCharger.reason;
+        if (bestCharger.ports > portCount) {
+          reasonHtml += `<span class="block mt-2.5 pt-2.5 border-t border-peach-200/60 text-xs text-latte-600 font-normal">※ご希望の出力（W数）をしっかり届けるため、ポート数に余裕のあるモデルを選んでいます。余ったポートはイヤホンなどを充電したい時にも役立ちます🌷</span>`;
+        }
+
+        // UI反映
+        recommendTitle.textContent = bestCharger.name;
+        recommendReason.innerHTML = reasonHtml;
+        cardImageLabel.textContent = bestCharger.imageLabel;
+        
+        mainAmazonBtn.href = bestCharger.mainAmazonUrl;
+        mainAmazonBtn.querySelector('span:first-child').textContent = "Amazonで最安値・在庫を見る";
+        mainAmazonBtn.classList.remove('hidden');
+
+        subUgreenBtn.href = bestCharger.subUgreenUrl;
+        subUgreenBtn.parentElement.parentElement.classList.remove('hidden');
+
+        // スペックタグ
+        recommendSpecs.innerHTML = bestCharger.specs
+          .map(spec => `<span class="bg-latte-50 text-latte-700 font-bold text-xs px-3 py-1 rounded-full border border-latte-200/80">✓ ${spec}</span>`)
+          .join('');
+
+      } else {
+        // 3. 該当なしエラーハンドリング
+        recommendTitle.textContent = "1台でまかなえる充電器がありませんでした";
+        recommendReason.textContent = `えらんだ機器の合計パワー（${totalWatts}W）や台数（${portCount}台）がとても多いため、1台だけで同時に急速充電するのは難しい状態です。充電器を2つに分けるか、時間をずらして充電するのがおすすめです☕️`;
+        cardImageLabel.textContent = "該当製品なし";
+
+        recommendSpecs.innerHTML = `
+          <span class="bg-peach-50 text-peach-500 font-bold text-xs px-3.5 py-1.5 rounded-full border border-peach-200">
+            ⚠️ 充電器を2台以上に分けて使ってください
+          </span>
+        `;
+
+        mainAmazonBtn.href = `https://www.amazon.co.jp/s?k=${encodeURIComponent("Anker マルチポート 充電器")}`;
+        mainAmazonBtn.querySelector('span:first-child').textContent = "Amazonで大容量充電器を検索する";
+        
+        subUgreenBtn.parentElement.parentElement.classList.add('hidden');
+      }
+
+      // 結果表示 & スクロール
+      resultSection.classList.remove('hidden');
+      resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
